@@ -7,20 +7,23 @@ import com.nju.nnt.common.Response;
 import com.nju.nnt.common.WeiXinUtil;
 import com.nju.nnt.entity.Goods;
 import com.nju.nnt.entity.User;
+import com.nju.nnt.service.GoodsService;
 import com.nju.nnt.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/user")
 public class UserController {
     @Autowired
     UserService userService;
+    @Autowired
+    GoodsService goodsService;
 
 
     @RequestMapping("/wxlogin")
@@ -91,4 +94,61 @@ public class UserController {
         log.info("UserDetail: {}",userDetail);
         return Response.success(userDetail);
     }
+
+    /**
+     * 这里还有许多逻辑需要处理
+     * 首先，进入页面后，如果商品已经被收藏，要变成红色，同时点击后取消收藏
+     * 其次，个人收藏页面的渲染逻辑也要处理
+     * @param data
+     * @return
+     */
+    @PostMapping("/collectGoods")
+    public Response collectGoods(@RequestBody JSONObject data)
+    {
+        log.info("check params");
+        String lossParams = CheckParams.check(data,new String[]{
+                "userId","goodsId"
+        });
+        if (!"".equals(lossParams)){
+            log.error("参数类型不匹配,缺少参数："+lossParams);
+            return Response.error("参数类型不匹配,缺少参数：\"+lossParams");
+        }
+
+        log.info("接收到的数据为：{}",data);
+
+        String userId = data.getString("userId");
+        Long goodsId = Long.parseLong(data.getString("goodsId"));
+        log.info("userId: {}", userId);
+        log.info("goodsId: {}", goodsId);
+        if(userService.hasCollectGoods(goodsId, userId))
+        {
+            userService.cancelCollectGoods(goodsId, userId);
+            return Response.success("取消收藏成功");
+        }
+        else
+        {
+            userService.collectGoods(goodsId, userId);
+            return Response.success("收藏成功");
+        }
+    }
+
+    @RequestMapping("/userGoodsRelation")
+    public Response getUserGoodsRelation(@RequestParam String userId, @RequestParam String goodsId)
+    {
+        log.info("userId: {}", userId);
+        log.info("goodsId: {}", goodsId);
+        boolean result = userService.hasCollectGoods(Long.parseLong(goodsId),userId);
+        return Response.success(result);
+    }
+
+    @RequestMapping("/listAllCollections")
+    public Response getAllUserCollections(@RequestParam String userId, @RequestParam int page)
+    {
+        log.info("userId: {}", userId);
+        List<Goods> result =goodsService.listAllCollectGoods(userService.getAllCollectInfo(userId), page, 10);
+        log.info(result.toString());
+        return Response.success(result);
+    }
+
+
 }

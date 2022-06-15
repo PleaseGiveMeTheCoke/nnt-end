@@ -2,6 +2,7 @@ package com.nju.nnt.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.nju.nnt.entity.Goods;
+import com.nju.nnt.entity.UserCollect;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface GoodsService {
     IPage<Goods> listGoodsPerPage(int page, int size);
 
     Goods getGoodsDetail(Long goodsId);
+
+    List<Goods> listAllCollectGoods(List<UserCollect> info, int page, int size);
 }
