@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.nju.nnt.entity.Goods;
+import com.nju.nnt.entity.UserCollect;
 import com.nju.nnt.mapper.GoodsMapper;
 import com.nju.nnt.service.GoodsService;
 import lombok.extern.slf4j.Slf4j;
@@ -117,5 +118,43 @@ public class GoodsServiceImpl implements GoodsService {
     public Goods getGoodsDetail(Long goodsId) {
         Goods goods = goodsMapper.selectById(goodsId);
         return goods;
+    }
+
+    @Override
+    public List<Goods> listAllCollectGoods(List<UserCollect> info, int page, int size)
+    {
+//        现在这里我们其实根本没有考虑page和size的作用，emm
+        List<Goods> result = new ArrayList<>();
+        log.info(info.toString());
+        info.forEach(item -> {
+            Goods goods = goodsMapper.selectById(item.getGoodsId());
+            if(goods!=null) result.add(goods);
+        });
+        log.info(result.toString());
+        return result;
+    }
+
+    @Override
+    public List<Goods> listAllPublishGoods(String userId)
+    {
+        QueryWrapper<Goods> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        return goodsMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public List<Goods> listAllGoodsByClassify(int classify)
+    {
+        QueryWrapper<Goods> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("classify", classify);
+        return goodsMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public List<Goods> listAllGoodsByTime()
+    {
+        QueryWrapper<Goods> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("publish_time");
+        return goodsMapper.selectList(queryWrapper);
     }
 }

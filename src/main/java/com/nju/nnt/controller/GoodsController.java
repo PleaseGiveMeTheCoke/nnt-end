@@ -73,7 +73,7 @@ public class GoodsController {
         });
         if (!"".equals(lossParams)){
             log.error("参数类型不匹配,缺少参数："+lossParams);
-            return Response.error("参数类型不匹配,缺少参数：\"+lossParams");
+            return Response.error("参数类型不匹配,缺少参数："+lossParams);
         }
 
         log.info("接收到的数据为：{}",data);
@@ -121,7 +121,7 @@ public class GoodsController {
         log.info("请求的页码:{}",data);
         if (!"".equals(lossParams)){
             log.error("参数类型不匹配,缺少参数："+lossParams);
-            return Response.error("参数类型不匹配,缺少参数：\"+lossParams");
+            return Response.error("参数类型不匹配,缺少参数："+lossParams);
         }
         int page = data.getInteger("page");
         int pageSize = 10;
@@ -180,7 +180,7 @@ public class GoodsController {
         });
         if (!"".equals(lossParams)){
             log.error("参数类型不匹配,缺少参数："+lossParams);
-            return Response.error("参数类型不匹配,缺少参数：\"+lossParams");
+            return Response.error("参数类型不匹配,缺少参数："+lossParams);
         }
 
         log.info("接收到的数据为：{}",data);
@@ -193,8 +193,26 @@ public class GoodsController {
         return Response.success(goodsList);
     }
 
+    @RequestMapping("/getAllPublish")
+    public Response getAllPublish(@RequestParam String userId, @RequestParam int page)
+    {
+        log.info("userId: {}", userId);
+        log.info("page: {}", page);
+        return Response.success(goodsService.listAllPublishGoods(userId));
+    }
 
 
+    @RequestMapping("/getAllGoodsByClassify")
+    public Response getAllPublish(@RequestParam int classIndex, @RequestParam int page)
+    {
+        log.info("classify: {}", classIndex);
+        return Response.success(goodsService.listAllGoodsByClassify(classIndex));
+    }
 
+    @RequestMapping("/getAllGoodsOrderByTime")
+    public Response getAllGoodsOrderByTime()
+    {
+        return Response.success(goodsService.listAllGoodsByTime());
+    }
 
 }
