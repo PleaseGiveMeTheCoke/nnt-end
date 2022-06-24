@@ -133,4 +133,28 @@ public class GoodsServiceImpl implements GoodsService {
         log.info(result.toString());
         return result;
     }
+
+    @Override
+    public List<Goods> listAllPublishGoods(String userId)
+    {
+        QueryWrapper<Goods> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        return goodsMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public List<Goods> listAllGoodsByClassify(int classify)
+    {
+        QueryWrapper<Goods> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("classify", classify);
+        return goodsMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public List<Goods> listAllGoodsByTime()
+    {
+        QueryWrapper<Goods> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("publish_time");
+        return goodsMapper.selectList(queryWrapper);
+    }
 }

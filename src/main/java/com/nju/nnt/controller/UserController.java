@@ -111,7 +111,7 @@ public class UserController {
         });
         if (!"".equals(lossParams)){
             log.error("参数类型不匹配,缺少参数："+lossParams);
-            return Response.error("参数类型不匹配,缺少参数：\"+lossParams");
+            return Response.error("参数类型不匹配,缺少参数："+lossParams);
         }
 
         log.info("接收到的数据为：{}",data);

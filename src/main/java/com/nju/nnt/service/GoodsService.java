@@ -19,4 +19,10 @@ public interface GoodsService {
     Goods getGoodsDetail(Long goodsId);
 
     List<Goods> listAllCollectGoods(List<UserCollect> info, int page, int size);
+
+    List<Goods> listAllPublishGoods(String userId);
+
+    List<Goods> listAllGoodsByClassify(int classify);
+
+    List<Goods> listAllGoodsByTime();
 }
